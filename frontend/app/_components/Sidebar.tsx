@@ -6,7 +6,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Icon from "@mdi/react";
-import { mdiHome, mdiNoteTextOutline, mdiPlus } from "@mdi/js";
+import { mdiHome, mdiLogout, mdiNoteTextOutline, mdiPlus, mdiAccountCircleOutline } from "@mdi/js";
+import { logoutAction } from "@/app/_lib/actions";
+import type { User } from "@/app/_lib/types";
 
 const navItems = [
   { href: "/dashboard", label: "ダッシュボード", icon: mdiHome },
@@ -14,7 +16,7 @@ const navItems = [
   { href: "/budgets/new", label: "家計簿登録", icon: mdiPlus },
 ] as const;
 
-export default function Sidebar() {
+export default function Sidebar({ user }: { user: User }) {
   const pathname = usePathname();
 
   return (
@@ -43,6 +45,23 @@ export default function Sidebar() {
           })}
         </ul>
       </nav>
+
+      {/* ログインユーザーとログアウト */}
+      <div className="border-t border-slate-700 px-3 py-4">
+        <div className="flex items-center gap-2 px-3 pb-3 text-sm text-slate-300">
+          <Icon path={mdiAccountCircleOutline} size={0.85} className="shrink-0" />
+          <span className="truncate" title={user.email}>{user.name}</span>
+        </div>
+        <form action={logoutAction}>
+          <button
+            type="submit"
+            className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+          >
+            <Icon path={mdiLogout} size={0.85} />
+            ログアウト
+          </button>
+        </form>
+      </div>
     </aside>
   );
 }

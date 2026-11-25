@@ -22,11 +22,17 @@ class Budget extends Model
     protected $casts = [
         'amount'      => 'integer',
         'category_id' => 'integer',
+        'user_id'     => 'integer',
         'date'        => 'date:Y-m-d',
     ];
 
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 }

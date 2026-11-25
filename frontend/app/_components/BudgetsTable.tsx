@@ -7,7 +7,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Icon from "@mdi/react";
 import { mdiPencil, mdiTrashCan } from "@mdi/js";
-import { updateBudget, deleteBudget } from "@/app/_lib/api";
+import { updateBudgetAction, deleteBudgetAction } from "@/app/_lib/actions";
 import CategoryPicker from "@/app/_components/CategoryPicker";
 import { CATEGORY_ICONS } from "@/app/_lib/categoryIcons";
 import type { Budget, BudgetFormData, Category } from "@/app/_lib/types";
@@ -34,7 +34,7 @@ export default function BudgetsTable({ budgets, categories }: { budgets: Budget[
     if (!confirm("この項目を削除しますか？")) return;
 
     // API送信
-    await deleteBudget(id);
+    await deleteBudgetAction(id);
 
     // 一覧を再取得するためにページをリフレッシュ
     router.refresh();
@@ -69,7 +69,7 @@ export default function BudgetsTable({ budgets, categories }: { budgets: Budget[
 
     // API送信（更新対象のIDとフォームデータを送信）
     try {
-      await updateBudget(editTarget.id, data);
+      await updateBudgetAction(editTarget.id, data);
       setEditTarget(null);
       router.refresh();
     } catch {

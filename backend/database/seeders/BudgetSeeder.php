@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Budget;
 use App\Models\Category;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class BudgetSeeder extends Seeder
@@ -11,6 +11,7 @@ class BudgetSeeder extends Seeder
     public function run(): void
     {
         $categoryIds = Category::pluck("id", "name");
+        $user = User::where("email", DemoUserSeeder::EMAIL)->firstOrFail();
 
         $budgets = [
             ["title" => "給与",            "amount" => 300000, "type" => "income",  "category_id" => $categoryIds["給与"],   "date" => "2026-08-25", "memo" => null],
@@ -32,7 +33,7 @@ class BudgetSeeder extends Seeder
         ];
 
         foreach ($budgets as $budget) {
-            Budget::create($budget);
+            $user->budgets()->create($budget);
         }
     }
 }

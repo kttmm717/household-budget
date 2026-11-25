@@ -5,7 +5,7 @@
 
 import { useRouter } from "next/navigation";
 import { createContext, useContext, useState } from "react";
-import { createBudget } from "@/app/_lib/api";
+import { createBudgetAction } from "@/app/_lib/actions";
 import CategoryPicker from "@/app/_components/CategoryPicker";
 import type { BudgetFormData, Category } from "@/app/_lib/types";
 
@@ -95,7 +95,7 @@ export default function BudgetForm({ categories }: { categories: Category[] }) {
 
     // API送信
     try {
-      await createBudget(data);
+      await createBudgetAction(data);
       router.push("/budgets");
     } catch {
       setError("登録に失敗しました。入力内容を確認してください。");

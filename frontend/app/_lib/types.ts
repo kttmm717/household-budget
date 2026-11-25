@@ -50,3 +50,37 @@ export type Category = {
   name: string;
   type: "income" | "expense" | "both";
 };
+
+// ログインユーザーの型
+export type User = {
+  id: number;
+  name: string;
+  email: string;
+};
+
+// ログイン・登録APIのレスポンスの型
+export type AuthResult = {
+  token: string;
+  user: User;
+};
+
+// ログインフォームの型
+export type LoginFormData = {
+  email: string;
+  password: string;
+};
+
+// 新規登録フォームの型
+export type RegisterFormData = {
+  name: string;
+  email: string;
+  password: string;
+  password_confirmation: string;
+};
+
+// 認証フォーム（useActionState）の状態の型
+export type AuthFormState = {
+  message?: string;                  // フォーム全体のエラー
+  errors?: Record<string, string[]>; // フィールドごとのエラー
+  values?: Record<string, string>;   // 入力値（エラー時に再表示するため。パスワードは含めない）
+} | undefined;
