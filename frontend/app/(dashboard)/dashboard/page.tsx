@@ -4,31 +4,41 @@
 import Link from "next/link";
 import Icon from "@mdi/react";
 import { mdiChevronRight, mdiWalletBifoldOutline, mdiCartOutline, mdiCalculator } from "@mdi/js";
-import { getBudgets } from "@/app/_lib/api";
-import type { Budget } from "@/app/_lib/types";
+import { getBudgets, getSummary } from "@/app/_lib/api";
 import RecentBudgetsTable from "@/app/_components/RecentBudgetsTable";
 import SummaryCard from "@/app/_components/SummaryCard";
+import MonthNav from "@/app/_components/MonthNav";
+import MonthlyTrendChart from "@/app/_components/charts/MonthlyTrendChart";
+import CategoryExpenseChart from "@/app/_components/charts/CategoryExpenseChart";
 
-export default async function DashboardPage() {
-  // APIから家計簿データを取得する
-  const res = await getBudgets();
-  const budgets: Budget[] = res.data;
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ month?: string }>;
+}) {
+  const { month } = await searchParams;
+  // month未指定なら今月をデフォルトにする
+  const currentMonth = month ?? new Date().toISOString().slice(0, 7);
 
-  // budgets から収入・支出・残高をそれぞれ集計する
-  const totalIncome = budgets.filter(b => b.type === "income").reduce((sum, b) => sum + b.amount, 0);
-  const totalExpense = budgets.filter(b => b.type === "expense").reduce((sum, b) => sum + b.amount, 0);
-  const balance = totalIncome - totalExpense;
+  // 集計（サマリー・グラフ用）と最近の家計簿を並行して取得する
+  const [summaryRes, budgetsRes] = await Promise.all([getSummary(currentMonth), getBudgets()]);
+  const summary = summaryRes.data;
+  const recentBudgets = budgetsRes.data.slice(0, 5);
 
   const fmt = (n: number) => n.toLocaleString("ja-JP");
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-slate-800 mb-6">ダッシュボード</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+        <h2 className="text-2xl font-bold text-slate-800">ダッシュボード</h2>
+        <MonthNav month={summary.month} basePath="/dashboard" />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
         {/* 収入 */}
         <SummaryCard
-          label="収入合計"
-          value={`¥${fmt(totalIncome)}`}
+          label="収入"
+          value={`¥${fmt(summary.income)}`}
           icon={mdiWalletBifoldOutline}
           color="text-emerald-600"
           bgColor="bg-emerald-100"
@@ -36,21 +46,38 @@ export default async function DashboardPage() {
 
         {/* 支出 */}
         <SummaryCard
-          label="支出合計"
-          value={`¥${fmt(totalExpense)}`}
+          label="支出"
+          value={`¥${fmt(summary.expense)}`}
           icon={mdiCartOutline}
           color="text-rose-600"
           bgColor="bg-rose-100"
         />
 
-        {/* 残高 */}
+        {/* 収支 */}
         <SummaryCard
-          label="残高"
-          value={`¥${fmt(balance)}`}
+          label="収支"
+          value={`${summary.balance < 0 ? "−" : ""}¥${fmt(Math.abs(summary.balance))}`}
           icon={mdiCalculator}
           color="text-blue-600"
           bgColor="bg-blue-100"
         />
+      </div>
+
+      {/* グラフ */}
+      <div className="mb-8 grid grid-cols-1 gap-4 lg:grid-cols-5">
+        <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-3">
+          <h3 className="mb-1 text-base font-bold text-slate-800">収入・支出の推移</h3>
+          <p className="mb-4 text-xs text-slate-500">直近6か月</p>
+          <MonthlyTrendChart data={summary.monthly} currentMonth={summary.month} />
+        </section>
+
+        <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-2">
+          <h3 className="mb-1 text-base font-bold text-slate-800">カテゴリ別の支出</h3>
+          <p className="mb-4 text-xs text-slate-500">
+            {Number(summary.month.slice(5))}月・合計 ¥{fmt(summary.expense)}
+          </p>
+          <CategoryExpenseChart data={summary.expense_by_category} />
+        </section>
       </div>
 
       {/* 最近の家計簿欄 */}
@@ -65,10 +92,10 @@ export default async function DashboardPage() {
         </Link>
       </div>
 
-      {budgets.length === 0 ? (
+      {recentBudgets.length === 0 ? (
         <p className="text-slate-500">データがありません。</p>
       ) : (
-        <RecentBudgetsTable budgets={budgets.slice(0, 5)} />
+        <RecentBudgetsTable budgets={recentBudgets} />
       )}
     </div>
   );

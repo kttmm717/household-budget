@@ -10,6 +10,13 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* グラフの系列色（色覚多様性に配慮して検証済み: 収入↔支出 CVD ΔE 9.2）
+     bg-income / bg-expense などの Tailwind クラスとして使える */
+  --color-income: #1baf7a;
+  --color-expense: #eb6834;
+  --color-chart-grid: #e1e0d9;
+  --color-chart-axis: #c3c2b7;
 }
 
 @media (prefers-color-scheme: dark) {

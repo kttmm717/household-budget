@@ -84,3 +84,25 @@ export type AuthFormState = {
   errors?: Record<string, string[]>; // フィールドごとのエラー
   values?: Record<string, string>;   // 入力値（エラー時に再表示するため。パスワードは含めない）
 } | undefined;
+
+// ダッシュボード集計の型
+export type MonthlyTotal = {
+  month: string; // "YYYY-MM"
+  income: number;
+  expense: number;
+};
+
+export type CategoryTotal = {
+  category_id: number;
+  category: string;
+  amount: number;
+};
+
+export type Summary = {
+  month: string;
+  income: number;
+  expense: number;
+  balance: number;
+  monthly: MonthlyTotal[];             // 指定月を含む直近6か月（古い順）
+  expense_by_category: CategoryTotal[]; // 指定月のカテゴリ別支出（多い順）
+};

@@ -13,6 +13,7 @@ import type {
   PaginatedResponse,
   Category,
   User,
+  Summary,
   AuthResult,
   LoginFormData,
   RegisterFormData,
@@ -127,4 +128,10 @@ export async function deleteBudget(id: number): Promise<void> {
 // カテゴリ一覧取得
 export async function getCategories(): Promise<ApiResponse<Category[]>> {
   return apiFetch<ApiResponse<Category[]>>("/categories");
+}
+
+// ダッシュボード集計（month: "YYYY-MM"、未指定なら今月）
+export async function getSummary(month?: string): Promise<ApiResponse<Summary>> {
+  const query = month ? `?month=${encodeURIComponent(month)}` : "";
+  return apiFetch<ApiResponse<Summary>>(`/summary${query}`);
 }

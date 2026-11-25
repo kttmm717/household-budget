@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\SummaryController;
 use Illuminate\Support\Facades\Route;
 
 // 認証不要（ブルートフォース対策で1分あたり10回まで）
@@ -18,4 +19,5 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::apiResource('budgets', BudgetController::class);
     Route::get('categories', [CategoryController::class, 'index']);
+    Route::get('summary', [SummaryController::class, 'show']);
 });
