@@ -15,6 +15,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         // API はログイン画面へのリダイレクトではなく 401 を返す（ログイン画面は Next.js 側にある）
         $middleware->redirectGuestsTo(fn () => null);
+
+        // Render などのロードバランサー越しでも正しい IP・HTTPS を判定できるようにする
+        $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

@@ -100,11 +100,23 @@ npm run dev
 
 ### デモアカウント
 
-シーダーで以下のユーザーとサンプルデータが作成されます。
+シーダーで以下のユーザーと、今月を含む直近6か月分のサンプルデータが作成されます。
 
 | メールアドレス | パスワード |
 |---|---|
 | `demo@example.com` | `password` |
+
+## デプロイ構成
+
+| 対象 | サービス | 備考 |
+|---|---|---|
+| フロントエンド | Vercel | Root Directory を `frontend` に設定。環境変数 `NEXT_PUBLIC_API_URL` に API の URL |
+| バックエンド | Render（Docker） | [render.yaml](render.yaml) の Blueprint で作成。[backend/Dockerfile](backend/Dockerfile) でビルド |
+| データベース | Neon（PostgreSQL） | 接続文字列を Render の `DB_URL` に設定 |
+
+- API はブラウザからではなく Next.js サーバーから呼ぶため、CORS の設定は不要です。
+- Render の起動時にマイグレーションとシーダー（カテゴリ・デモユーザー）が自動で実行されます。
+- Render の無料プランは一定時間アクセスがないとスリープするため、最初のアクセスは表示まで時間がかかります。
 
 ### テスト
 

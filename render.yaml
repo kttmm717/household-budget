@@ -1,0 +1,36 @@
+# Render Blueprint（Laravel API）
+# Render のダッシュボードで「New → Blueprint」からこのリポジトリを選ぶと、この設定でサービスが作られる
+services:
+  - type: web
+    name: household-budget-api
+    runtime: docker
+    rootDir: backend
+    plan: free
+    region: singapore
+    healthCheckPath: /up
+    autoDeploy: true
+    envVars:
+      - key: APP_NAME
+        value: household-budget
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_KEY
+        sync: false # 作成時に入力する（php artisan key:generate --show で生成）
+      - key: APP_URL
+        sync: false # 例: https://household-budget-api.onrender.com
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_URL
+        sync: false # Neon の接続文字列（postgresql://...?sslmode=require）
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: LOG_LEVEL
+        value: info
+      - key: SESSION_DRIVER
+        value: array # API はトークン認証なのでセッションは使わない
+      - key: CACHE_STORE
+        value: database
+      - key: QUEUE_CONNECTION
+        value: sync
