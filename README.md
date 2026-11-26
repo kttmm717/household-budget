@@ -2,6 +2,14 @@
 
 Next.js（App Router）+ Laravel API で構築した家計簿管理アプリです。
 
+![ダッシュボード](docs/screenshots/dashboard.png)
+
+## スクリーンショット
+
+| 家計簿一覧 | 家計簿登録 | ログイン |
+|---|---|---|
+| ![家計簿一覧](docs/screenshots/budgets.png) | ![家計簿登録](docs/screenshots/budget-new.png) | ![ログイン](docs/screenshots/login.png) |
+
 ## 技術スタック
 
 | レイヤー | 技術 |

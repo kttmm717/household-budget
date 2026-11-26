@@ -19,6 +19,11 @@ const navItems = [
 export default function Sidebar({ user }: { user: User }) {
   const pathname = usePathname();
 
+  // 現在のURLに一致するメニューのうち、最も具体的なもの（/budgets/new なら「家計簿登録」）だけを選択状態にする
+  const activeHref = navItems
+    .filter(({ href }) => pathname === href || pathname.startsWith(href + "/"))
+    .sort((a, b) => b.href.length - a.href.length)[0]?.href;
+
   return (
     <aside className="w-60 min-h-screen bg-slate-800 text-white flex flex-col">
       <div className="px-6 py-5 border-b border-slate-700">
@@ -27,7 +32,7 @@ export default function Sidebar({ user }: { user: User }) {
       <nav className="flex-1 px-3 py-4">
         <ul className="space-y-1">
           {navItems.map(({ href, label, icon }) => {
-            const isActive = pathname === href || pathname.startsWith(href + "/");
+            const isActive = href === activeHref;
             return (
               <li key={href}>
                 <Link
